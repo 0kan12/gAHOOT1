@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cevap Sayfası</title>
+    <style>
+        /* Stil kodları burada tanımlanır */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #sonuc {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        #carpiIsaret {
+            font-size: 48px;
+            color: red;
+            margin-bottom: 20px;
+        }
+
+        #mesajLabel {
+            font-size: 18px;
+            color: black;
+        }
+        #usernameLabel {
+            font-size: 16px;
+            color: black;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<meta http-equiv="refresh" content="2">
+<body>
+    <div id="sonuc">
+        <div id="carpiIsaret">&#10006;</div>
+        <label id="mesajLabel">Üzgünüz, puan alamadınız.</label>
+        <br>
+        <label id="mesajLabel">Sıralaman: {{ sıra_no }}</label>
+    </div>
+    <label id="usernameLabel">Oyuncu:{{ username }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Puan:{{ puan }}</label>
+</body>
+<script>
+
+    setInterval(function() {
+                fetch('https://ray-humane-hagfish.ngrok-free.app/get_kalan_sure?room_code={{ room_code }}')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.trim() === 'true') {
+                            window.location.href = 'https://ray-humane-hagfish.ngrok-free.app/client_ctrlr?room_code={{ room_code }}&username={{ username }}';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Hata:', error);
+                    });
+            }, 1000);
+    </script>
+</html>

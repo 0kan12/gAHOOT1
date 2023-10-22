@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Oyun Odası</title>
+    <style>
+        /* Temel stil ayarları */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .game-container {
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .room-label {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .participants {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #666;
+            text-align: left;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div style="position: absolute; top: 20px; left: 20px; font-size: 24px; font-weight: bold; color: #333;">gahoot.dvtfl.com</div>
+        <img src="{{ url_for('static', filename='images/a.png') }}" alt="QR Code" style="position: absolute; top: 20px; right: 20px; width: 100px; height: 100px;">
+        <label class="room-label">Oda No: <span id="room-code-placeholder">{{ room_code }}</span></label>
+        <ul class="participants" id="participants-list">
+            <!-- Katılımcılar burada listelenir -->
+        </ul>
+        <button id="start-game-button">Oyunu Başlat</button>
+    </div>
+
+    <script>
+        const participantsList = document.getElementById('participants-list');
+        const startGameButton = document.getElementById('start-game-button');
+
+        startGameButton.addEventListener('click', () => {
+            startGame();
+        });
+
+        const interval = setInterval(fetchParticipants, 3000);
+
+        fetchParticipants();
+
+        function fetchParticipants() {
+            fetch(`https://ray-humane-hagfish.ngrok-free.app/get_players?room_code={{ room_code }}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('API isteği başarısız oldu.');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    const participants = data.split(',').map(item => item.trim());
+                    participantsList.innerHTML = '';
+                    participants.forEach(participant => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = participant;
+                        participantsList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    participantsList.innerHTML = 'Katılımcıları alırken bir hata oluştu: ' + error.message;
+                });
+        }
+
+        function startGame() {
+    var redirectUrl = 'https://ray-humane-hagfish.ngrok-free.app/new_question?room_code={{ room_code }}';
+
+    // Sayfayı yönlendirin
+    window.location.href = redirectUrl;
+}
+
+    </script>
+</body>
+</html>
