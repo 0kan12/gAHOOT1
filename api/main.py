@@ -1,7 +1,7 @@
 
 from threading import Thread
 from flask import request,render_template,jsonify,redirect
-import random,string,flask,json,hashlib,os,qrcode,threading,time
+import random,string,flask,json,os,qrcode,threading,time
 soru_num=0
 base_url="https://ray-humane-hagfish.ngrok-free.app"
 locps="AAACB03965D253F1A1C779169EA7B689E0DC52F8BE8BEABDFB9C20946F2A4EB9"
