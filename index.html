@@ -1,3 +1,33 @@
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif; 
+  }
+
+  .center-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .message {
+    font-size: 24px;
+    padding: 20px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    font-size: 100px;
+    background-color: #f9f9f9;
+  }
+</style>
+<body>
+  <div class="center-screen">
+    <div class="message">
+      Yönlendiriliyorsunuz...
+    </div>
+  </div>
+</body>
 <script>
   const jsonUrl = 'https://jsonblob.com/api/jsonBlob/1195399769899261952';
   fetch(jsonUrl)
