@@ -1,0 +1,48 @@
+<style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif; 
+    }
+  
+    .center-screen {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+  
+    .message {
+      font-size: 24px;
+      padding: 20px;
+      border: 2px solid #333;
+      border-radius: 8px;
+      font-size: 100px;
+      background-color: #f9f9f9;
+    }
+  </style>
+  <body>
+    <div class="center-screen">
+      <div class="message">
+        Yönlendiriliyorsunuz...
+      </div>
+    </div>
+  </body>
+  <script>
+    const jsonUrl = '/data_.json';
+    fetch(jsonUrl)
+      .then(response => response.json())
+      .then(data => {
+        const route = window.location.pathname.replace('/', '');
+        if (data.hasOwnProperty(route)) {
+          window.location.href = data[route];
+        } else {
+          window.location.href="https://www.roblox.com/groups/16982915";
+        }
+      })
+      .catch(error => {
+        document.body.innerHTML = '<h1>Veri alınamadı.</h1>';
+      });
+  </script>
+  
+  
