@@ -6,7 +6,7 @@
       const urlParams = new URLSearchParams(window.location.search);
       const route = urlParams.get('x');
       if (data.hasOwnProperty(route)) {
-        window.location.href = data[route];  // Burada "route" kullanıldı
+        window.location.href = data[route];
       } else {
         document.body.innerHTML = '<h1>Geçersiz route.</h1>';
       }
