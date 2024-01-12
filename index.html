@@ -8,7 +8,9 @@
   fetch(jsonUrl)
     .then(response => response.json())
     .then(data => {
-      const path = window.location.pathname.replace('/', '');
+    const urlParams = new URLSearchParams(window.location.search);
+    const route = urlParams.get('x')
+      const path = route.replace('/', '');
       if (data.hasOwnProperty(path)) {
         window.location.href = data[path];
       } else {
