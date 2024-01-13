@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kısa URL Kaydetme</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Kısa URL Kaydetme</h2>
+    <form id="urlForm">
+        <div class="form-group">
+            <label for="shortKey">Kısa Anahtar (Short Key):</label>
+            <input type="text" class="form-control" id="shortKey" placeholder="Kısa Anahtar Girin">
+        </div>
+        <div class="form-group">
+            <label for="originalUrl">Orijinal URL:</label>
+            <input type="text" class="form-control" id="originalUrl" placeholder="Orijinal URL Girin">
+        </div>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </form>
+
+    <div class="mt-4" id="resultDisplay"></div>
+</div>
+
+<script>
+document.getElementById('urlForm').addEventListener('submit', function(event) {
+    event.preventDefault(); 
+
+    const shortKey = document.getElementById('shortKey').value;
+    const originalUrl = document.getElementById('originalUrl').value;
+
+    fetchDataAndUpdate(shortKey, originalUrl);
+});
+
+async function fetchDataAndUpdate(shortKey, originalUrl) {
+    const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
+
+    try {
+        // Mevcut veriyi al
+        const response = await fetch(apiUrl);
+        const currentData = await response.json();
+        currentData[shortKey] = originalUrl;
+
+
+        const postResponse = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(currentData)
+        });
+
+        if (postResponse.ok) {
+            const responseData = await postResponse.json();
+            document.getElementById('resultDisplay').innerHTML = `
+                <div class="alert alert-success">
+                    Veri başarıyla güncellendi: ${JSON.stringify(responseData)}
+                </div>`;
+        } else {
+            document.getElementById('resultDisplay').innerHTML = `
+                <div class="alert alert-danger">
+                    Veri güncelleme sırasında bir hata oluştu.
+                </div>`;
+        }
+    } catch (error) {
+        document.getElementById('resultDisplay').innerHTML = `
+            <div class="alert alert-danger">
+                Hata: ${error.message}
+            </div>`;
+    }
+}
+</script>
+
+</body>
+</html>
