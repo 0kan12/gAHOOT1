@@ -63,7 +63,7 @@
 
 <h2>URL Kısaltma</h2>
 
-<form id="urlForm">
+<form id="urlForm" onsubmit="return handleFormSubmit()">
     <div>
         <label for="shortKey">Kısa Anahtar:</label>
         <input type="text" id="shortKey" name="shortKey" required>
@@ -74,16 +74,19 @@
     </div>
     <div class="g-recaptcha" data-sitekey="6LfDmk8pAAAAAFhY_EUxmYPfNFEyHXckKeSVQtg_" data-callback="enableSubmitButton"></div>
     <div>
-        <button type="submit">Kısa URL Oluştur</button>
+        <button type="submit" id="submitButton" disabled>Kısa URL Oluştur</button>
     </div>
 </form>
 
 <div id="resultDisplay"></div>
 
 <script>
+var isSubmitting = false;
+
 function enableSubmitButton() {
-    const submitButton = document.querySelector('button[type="submit"]');
-    submitButton.disabled = false;
+    if (!isSubmitting) {
+        document.getElementById("submitButton").disabled = false;
+    }
 }
 
 document.getElementById('urlForm').addEventListener('submit', function(event) {
@@ -94,7 +97,7 @@ document.getElementById('urlForm').addEventListener('submit', function(event) {
 
     grecaptcha.execute('6LfDmk8pAAAAAFhY_EUxmYPfNFEyHXckKeSVQtg_', { action: 'submit_form' }).then(function(token) {
         if (token) {
-            document.getElementById('urlForm').submit();
+            checkAndCreateShortUrl(shortKey, originalUrl);
         } else {
             document.getElementById('resultDisplay').innerHTML = `
                 <div class="alert alert-danger">
@@ -103,6 +106,16 @@ document.getElementById('urlForm').addEventListener('submit', function(event) {
         }
     });
 });
+
+function handleFormSubmit() {
+    if (!isSubmitting) {
+        isSubmitting = true;
+        document.getElementById("submitButton").disabled = true;
+        return true; 
+    } else {
+        return false; 
+    }
+}
 
 async function checkAndCreateShortUrl(shortKey, originalUrl) {
     const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
