@@ -54,10 +54,9 @@ async function fetchDataAndUpdate(shortKey, originalUrl) {
         });
 
         if (postResponse.ok) {
-            const responseData = await postResponse.json();
             document.getElementById('resultDisplay').innerHTML = `
                 <div class="alert alert-success">
-                    Veri başarıyla güncellendi: <a href="/${shortKey}">creativestudioss.online/${shortKey}</a>
+                    Kısa link başarıyla oluşturuldu: <a href="https://creativestudioss.online/${shortKey}" target="_blank">creativestudioss.online/${shortKey}</a>
                 </div>`;
         } else {
             document.getElementById('resultDisplay').innerHTML = `
