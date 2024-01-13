@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Discord Embed Oluşturucu</title>
 <style>
     body, html {
       height: 100%;
@@ -17,32 +22,37 @@
       padding: 20px;
       border: 2px solid #333;
       border-radius: 8px;
-      font-size: 100px;
       background-color: #f9f9f9;
     }
-  </style>
-  <body>
+</style>
+</head>
+<body>
     <div class="center-screen">
-      <div class="message">
-        Yönlendiriliyorsunuz...
-      </div>
+        <div class="message">
+            Yönlendiriliyorsunuz...
+        </div>
     </div>
-  </body>
-  <script>
+
+<script>
     const jsonUrl = "https://jsonblob.com/api/1195399769899261952";
+    
     fetch(jsonUrl)
       .then(response => response.json())
       .then(data => {
         const route = window.location.pathname.replace('/', '');
+        
         if (data.hasOwnProperty(route)) {
-          window.location.href = data[route];
+          const targetUrl = data[route];
+          // Discord için embed oluşturucu sayfasına yönlendirme
+          window.location.href = `https://discord.com/embed?url=${encodeURIComponent(targetUrl)}`;
         } else {
-          window.location.href="https://www.roblox.com/groups/16982915";
+          // Belirtilen kısa anahtarın karşılığı bulunamazsa bir varsayılan sayfaya yönlendirme
+          window.location.href = "https://www.roblox.com/groups/16982915";
         }
       })
       .catch(error => {
         document.body.innerHTML = '<h1>Veri alınamadı.</h1>';
       });
-  </script>
-  
-  
+</script>
+</body>
+</html>
