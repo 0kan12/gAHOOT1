@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Short URL Generator</title>
+<script src="https://www.google.com/recaptcha/enterprise.js?render=6LfDmk8pAAAAAERJIWXTp7uSEvmlas36nT44dBdj"></script>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -71,6 +72,7 @@
         <label for="originalUrl">Orijinal URL:</label>
         <input type="url" id="originalUrl" name="originalUrl" required>
     </div>
+    <div class="g-recaptcha" data-sitekey="6LfDmk8pAAAAAFhY_EUxmYPfNFEyHXckKeSVQtg_" data-callback="enableSubmitButton"></div>
     <div>
         <button type="submit">Kısa URL Oluştur</button>
     </div>
@@ -79,64 +81,81 @@
 <div id="resultDisplay"></div>
 
 <script>
-document.getElementById('urlForm').addEventListener('submit', function(event) {
-    event.preventDefault(); 
-
-    const shortKey = document.getElementById('shortKey').value;
-    const originalUrl = document.getElementById('originalUrl').value;
-
-    // Aynı shortKey'in tekrar oluşturulmasını kontrol et
-    checkAndCreateShortUrl(shortKey, originalUrl);
-});
-
-async function checkAndCreateShortUrl(shortKey, originalUrl) {
-    const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
-
-    try {
-        // Mevcut veriyi al
-        const response = await fetch(apiUrl);
-        const currentData = await response.json();
-
-        // Eğer shortKey zaten varsa, hata mesajı göster
-        if (currentData.hasOwnProperty(shortKey)) {
-            document.getElementById('resultDisplay').innerHTML = `
-                <div class="alert alert-danger">
-                    Bu kısa link anahtarı zaten kullanımda.
-                </div>`;
-            return;
-        }
-
-        // Eğer shortKey yoksa, veriyi güncelle
-        currentData[shortKey] = originalUrl;
-
-        const postResponse = await fetch(apiUrl, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(currentData)
-        });
-
-        if (postResponse.ok) {
-            document.getElementById('resultDisplay').innerHTML = `
-                <div class="alert alert-success">
-                    Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
-                </div>`;
-        } else {
-            document.getElementById('resultDisplay').innerHTML = `
-                <div class="alert alert-danger">
-                    Veri güncelleme sırasında bir hata oluştu.
-                </div>`;
-        }
-    } catch (error) {
-        document.getElementById('resultDisplay').innerHTML = `
-            <div class="alert alert-danger">
-                Hata: ${error.message}
-            </div>`;
+    // This function will be called once the reCAPTCHA is successfully verified.
+    function enableSubmitButton() {
+        const submitButton = document.querySelector('button[type="submit"]');
+        submitButton.disabled = false; // Enable the submit button
     }
-}
-</script>
+    
+    document.getElementById('urlForm').addEventListener('submit', function(event) {
+        event.preventDefault(); 
+    
+        const shortKey = document.getElementById('shortKey').value;
+        const originalUrl = document.getElementById('originalUrl').value;
+    
+        // Check if the reCAPTCHA is successfully verified
+        grecaptcha.execute('6LfDmk8pAAAAAFhY_EUxmYPfNFEyHXckKeSVQtg_', { action: 'submit_form' }).then(function(token) {
+            // If token exists, proceed with form submission
+            if (token) {
+                checkAndCreateShortUrl(shortKey, originalUrl);
+            } else {
+                // Handle the case where reCAPTCHA token is not available
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="alert alert-danger">
+                        reCAPTCHA doğrulaması tamamlanmadı.
+                    </div>`;
+            }
+        });
+    });
+    
+    async function checkAndCreateShortUrl(shortKey, originalUrl) {
+        const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
+    
+        try {
+            // Mevcut veriyi al
+            const response = await fetch(apiUrl);
+            const currentData = await response.json();
+    
+            // Eğer shortKey zaten varsa, hata mesajı göster
+            if (currentData.hasOwnProperty(shortKey)) {
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="alert alert-danger">
+                        Bu kısa link anahtarı zaten kullanımda.
+                    </div>`;
+                return;
+            }
+    
+            // Eğer shortKey yoksa, veriyi güncelle
+            currentData[shortKey] = originalUrl;
+    
+            const postResponse = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(currentData)
+            });
+    
+            if (postResponse.ok) {
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="alert alert-success">
+                        Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
+                    </div>`;
+            } else {
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="alert alert-danger">
+                        Veri güncelleme sırasında bir hata oluştu.
+                    </div>`;
+            }
+        } catch (error) {
+            document.getElementById('resultDisplay').innerHTML = `
+                <div class="alert alert-danger">
+                    Hata: ${error.message}
+                </div>`;
+        }
+    }
+    </script>
 
 </body>
 </html>
