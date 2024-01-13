@@ -43,10 +43,8 @@
         
         if (data.hasOwnProperty(route)) {
           const targetUrl = data[route];
-          // Discord için embed oluşturucu sayfasına yönlendirme
-          window.location.href = `https://discord.com/embed?url=${encodeURIComponent(targetUrl)}`;
+          window.location.href = targetUrl;
         } else {
-          // Belirtilen kısa anahtarın karşılığı bulunamazsa bir varsayılan sayfaya yönlendirme
           window.location.href = "https://www.roblox.com/groups/16982915";
         }
       })
