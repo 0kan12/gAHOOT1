@@ -74,34 +74,29 @@
     </div>
     <div class="g-recaptcha" data-sitekey="6LfDmk8pAAAAAFhY_EUxmYPfNFEyHXckKeSVQtg_" data-callback="enableSubmitButton"></div>
     <div>
-        <button type="submit" id="submitButton" disabled>Kısa URL Oluştur</button>
+        <button type="submit" onclick="checkAndCreateShortUrl(document.getElementById('shortKey').value,document.getElementById('originalUrl'))" id="submitButton" disabled>Kısa URL Oluştur</button>
     </div>
 </form>
 
 <div id="resultDisplay"></div>
 
 <script>
+var isSubmitting = false;
+
 function enableSubmitButton() {
-    document.getElementById('submitButton').disabled = false;
+    if (!isSubmitting) {
+        document.getElementById("submitButton").disabled = false;
+    }
 }
-
-document.getElementById('urlForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const shortKey = document.getElementById('shortKey').value;
-    const originalUrl = document.getElementById('originalUrl').value;
-
-    grecaptcha.execute('6LfDmk8pAAAAAFhY_EUxmYPfNFEyHXckKeSVQtg_', { action: 'submit_form' }).then(function(token) {
-        if (token) {
-            checkAndCreateShortUrl(shortKey, originalUrl);
-        } else {
-            document.getElementById('resultDisplay').innerHTML = `
-                <div class="alert alert-danger">
-                    reCAPTCHA doğrulaması tamamlanmadı.
-                </div>`;
-        }
-    });
-});
+function handleFormSubmit() {
+    if (!isSubmitting) {
+        isSubmitting = true;
+        document.getElementById("submitButton").disabled = true;
+        return true; 
+    } else {
+        return false; 
+    }
+}
 
 async function checkAndCreateShortUrl(shortKey, originalUrl) {
     const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
