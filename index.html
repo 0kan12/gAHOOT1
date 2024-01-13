@@ -74,75 +74,78 @@
     </div>
     <div class="g-recaptcha" data-sitekey="6LfDmk8pAAAAAFhY_EUxmYPfNFEyHXckKeSVQtg_" data-callback="enableSubmitButton"></div>
     <div>
-        <button type="submit" onclick="checkAndCreateShortUrl(document.getElementById('shortKey').value,document.getElementById('originalUrl'))" id="submitButton" disabled>Kısa URL Oluştur</button>
+        <button type="submit" id="submitButton" disabled>Kısa URL Oluştur</button>
     </div>
 </form>
 
 <div id="resultDisplay"></div>
 
 <script>
-var isSubmitting = false;
-
-function enableSubmitButton() {
-    if (!isSubmitting) {
-        document.getElementById("submitButton").disabled = false;
-    }
-}
-function handleFormSubmit() {
-    if (!isSubmitting) {
-        isSubmitting = true;
-        document.getElementById("submitButton").disabled = true;
-        return true; 
-    } else {
-        return false; 
-    }
-}
-
-async function checkAndCreateShortUrl(shortKey, originalUrl) {
-    const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
-
-    try {
-        const response = await fetch(apiUrl);
-        const currentData = await response.json();
-
-        if (currentData.hasOwnProperty(shortKey)) {
-            document.getElementById('resultDisplay').innerHTML = `
-                <div class="alert alert-danger">
-                    Bu kısa link anahtarı zaten kullanımda.
-                </div>`;
-            return;
+    var isSubmitting = false;
+    
+    function enableSubmitButton() {
+        if (!isSubmitting) {
+            document.getElementById("submitButton").disabled = false;
         }
-
-        currentData[shortKey] = originalUrl;
-
-        const postResponse = await fetch(apiUrl, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(currentData)
-        });
-
-        if (postResponse.ok) {
-            document.getElementById('resultDisplay').innerHTML = `
-                <div class="alert alert-success">
-                    Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
-                </div>`;
+    }
+    
+    function handleFormSubmit() {
+        if (!isSubmitting) {
+            isSubmitting = true;
+            document.getElementById("submitButton").disabled = true;
+            return true;
         } else {
+            return false;
+        }
+    }
+    
+    async function checkAndCreateShortUrl() {
+        const shortKey = document.getElementById('shortKey').value;
+        const originalUrl = document.getElementById('originalUrl').value; // Değeri al
+        const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
+    
+        try {
+            const response = await fetch(apiUrl);
+            const currentData = await response.json();
+    
+            if (currentData.hasOwnProperty(shortKey)) {
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="alert alert-danger">
+                        Bu kısa link anahtarı zaten kullanımda.
+                    </div>`;
+                return;
+            }
+    
+            currentData[shortKey] = originalUrl;
+    
+            const postResponse = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(currentData)
+            });
+    
+            if (postResponse.ok) {
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="alert alert-success">
+                        Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
+                    </div>`;
+            } else {
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="alert alert-danger">
+                        Veri güncelleme sırasında bir hata oluştu.
+                    </div>`;
+            }
+        } catch (error) {
             document.getElementById('resultDisplay').innerHTML = `
                 <div class="alert alert-danger">
-                    Veri güncelleme sırasında bir hata oluştu.
+                    Hata: ${error.message}
                 </div>`;
         }
-    } catch (error) {
-        document.getElementById('resultDisplay').innerHTML = `
-            <div class="alert alert-danger">
-                Hata: ${error.message}
-            </div>`;
     }
-}
-</script>
+    </script>
 
 </body>
 </html>
