@@ -1,57 +1,142 @@
-<script>
-    document.getElementById('urlForm').addEventListener('submit', function(event) {
-        event.preventDefault(); 
-    
-        const shortKey = document.getElementById('shortKey').value;
-        const originalUrl = document.getElementById('originalUrl').value;
-    
-        checkAndCreateShortUrl(shortKey, originalUrl);
-    });
-    
-    async function checkAndCreateShortUrl(shortKey, originalUrl) {
-        const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
-    
-        try {
-l
-            const response = await fetch(apiUrl);
-            const currentData = await response.json();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Short URL Generator</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
 
-            if (currentData.hasOwnProperty(shortKey)) {
-                document.getElementById('resultDisplay').innerHTML = `
-                    <div class="alert alert-danger">
-                        Bu kısa link anahtarı zaten kullanımda.
-                    </div>`;
-                return;
-            }
-    
-            currentData[shortKey] = originalUrl;
-    
-            const postResponse = await fetch(apiUrl, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(currentData)
-            });
-    
-            if (postResponse.ok) {
-                document.getElementById('resultDisplay').innerHTML = `
-                    <div class="alert alert-success">
-                        Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
-                    </div>`;
-            } else {
-                document.getElementById('resultDisplay').innerHTML = `
-                    <div class="alert alert-danger">
-                        Veri güncelleme sırasında bir hata oluştu.
-                    </div>`;
-            }
-        } catch (error) {
+    form div {
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="url"] {
+        width: 300px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    button {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    .alert {
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c2c7;
+        color: #721c24;
+    }
+</style>
+</head>
+<body>
+
+<h2>URL Kısaltma</h2>
+
+<form id="urlForm">
+    <div>
+        <label for="shortKey">Kısa Anahtar:</label>
+        <input type="text" id="shortKey" name="shortKey" required>
+    </div>
+    <div>
+        <label for="originalUrl">Orijinal URL:</label>
+        <input type="url" id="originalUrl" name="originalUrl" required>
+    </div>
+    <div>
+        <button type="submit">Kısa URL Oluştur</button>
+    </div>
+</form>
+
+<div id="resultDisplay"></div>
+
+<script>
+document.getElementById('urlForm').addEventListener('submit', function(event) {
+    event.preventDefault(); 
+
+    const shortKey = document.getElementById('shortKey').value;
+    const originalUrl = document.getElementById('originalUrl').value;
+
+    // Aynı shortKey'in tekrar oluşturulmasını kontrol et
+    checkAndCreateShortUrl(shortKey, originalUrl);
+});
+
+async function checkAndCreateShortUrl(shortKey, originalUrl) {
+    const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
+
+    try {
+        // Mevcut veriyi al
+        const response = await fetch(apiUrl);
+        const currentData = await response.json();
+
+        // Eğer shortKey zaten varsa, hata mesajı göster
+        if (currentData.hasOwnProperty(shortKey)) {
             document.getElementById('resultDisplay').innerHTML = `
                 <div class="alert alert-danger">
-                    Hata: ${error.message}
+                    Bu kısa link anahtarı zaten kullanımda.
+                </div>`;
+            return;
+        }
+
+        // Eğer shortKey yoksa, veriyi güncelle
+        currentData[shortKey] = originalUrl;
+
+        const postResponse = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(currentData)
+        });
+
+        if (postResponse.ok) {
+            document.getElementById('resultDisplay').innerHTML = `
+                <div class="alert alert-success">
+                    Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
+                </div>`;
+        } else {
+            document.getElementById('resultDisplay').innerHTML = `
+                <div class="alert alert-danger">
+                    Veri güncelleme sırasında bir hata oluştu.
                 </div>`;
         }
+    } catch (error) {
+        document.getElementById('resultDisplay').innerHTML = `
+            <div class="alert alert-danger">
+                Hata: ${error.message}
+            </div>`;
     }
-    </script>
-    
+}
+</script>
+
+</body>
+</html>
