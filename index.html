@@ -112,6 +112,9 @@
                     <div class="alert alert-danger">
                         Bu kısa link anahtarı zaten kullanımda.
                     </div>`;
+                    setTimeout(() => {
+                    location.reload();
+                }, 2000);
             } else {
                 currentData[shortKey] = originalUrl;
 
@@ -129,13 +132,17 @@
                         <div class="alert alert-success">
                             Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
                         </div>`;
+                        setTimeout(() => {
                     location.reload();
+                }, 2000);
                 } else {
                     document.getElementById('resultDisplay').innerHTML = `
                         <div class="alert alert-danger">
                             Veri güncelleme sırasında bir hata oluştu.
                         </div>`;
+                        setTimeout(() => {
                     location.reload();
+                }, 2000);
                 }
                 
             }
