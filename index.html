@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Short URL Generator</title>
-<script src="https://www.google.com/recaptcha/enterprise.js?render=6LfDmk8pAAAAAERJIWXTp7uSEvmlas36nT44dBdj"></script>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -63,7 +62,7 @@
 
 <h2>URL Kısaltma</h2>
 
-<form id="urlForm" onsubmit="return handleFormSubmit(event)">
+<form id="urlForm">
     <div>
         <label for="shortKey">Kısa Anahtar:</label>
         <input type="text" id="shortKey" name="shortKey" required>
@@ -72,79 +71,67 @@
         <label for="originalUrl">Orijinal URL:</label>
         <input type="url" id="originalUrl" name="originalUrl" required>
     </div>
-    <div class="g-recaptcha" data-sitekey="6LfDmk8pAAAAAERJIWXTp7uSEvmlas36nT44dBdj" data-callback="enableSubmitButton"></div>
     <div>
-        <button type="submit" id="submitButton" disabled>Kısa URL Oluştur</button>
+        <button type="submit">Kısa URL Oluştur</button>
     </div>
 </form>
 
 <div id="resultDisplay"></div>
 
 <script>
-    var isSubmitting = false;
+document.getElementById('urlForm').addEventListener('submit', function(event) {
+    event.preventDefault(); 
 
-    function enableSubmitButton() {
-        if (!isSubmitting) {
-            document.getElementById("submitButton").disabled = false;
-        }
-    }
+    const shortKey = document.getElementById('shortKey').value;
+    const originalUrl = document.getElementById('originalUrl').value;
 
-    function handleFormSubmit(event) {
-        event.preventDefault();
-        if (!isSubmitting) {
-            isSubmitting = true;
-            document.getElementById("submitButton").disabled = true;
-            checkAndCreateShortUrl();
-        }
-        return false;
-    }
+    checkAndCreateShortUrl(shortKey, originalUrl);
+});
 
-    async function checkAndCreateShortUrl() {
-        const shortKey = document.getElementById('shortKey').value;
-        const originalUrl = document.getElementById('originalUrl').value;
-        const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
+async function checkAndCreateShortUrl(shortKey, originalUrl) {
+    const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
 
-        try {
-            const response = await fetch(apiUrl);
-            const currentData = await response.json();
+    try {
+        const response = await fetch(apiUrl);
+        const currentData = await response.json();
 
-            if (currentData.hasOwnProperty(shortKey)) {
-                document.getElementById('resultDisplay').innerHTML = `
-                    <div class="alert alert-danger">
-                        Bu kısa link anahtarı zaten kullanımda.
-                    </div>`;
-                return;
-            }
-
-            currentData[shortKey] = originalUrl;
-
-            const postResponse = await fetch(apiUrl, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(currentData)
-            });
-
-            if (postResponse.ok) {
-                document.getElementById('resultDisplay').innerHTML = `
-                    <div class="alert alert-success">
-                        Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
-                    </div>`;
-            } else {
-                document.getElementById('resultDisplay').innerHTML = `
-                    <div class="alert alert-danger">
-                        Veri güncelleme sırasında bir hata oluştu.
-                    </div>`;
-            }
-        } catch (error) {
+        if (currentData.hasOwnProperty(shortKey)) {
             document.getElementById('resultDisplay').innerHTML = `
                 <div class="alert alert-danger">
-                    Hata: ${error.message}
+                    Bu kısa link anahtarı zaten kullanımda.
+                </div>`;
+            return;
+        }
+
+        currentData[shortKey] = originalUrl;
+
+        const postResponse = await fetch(apiUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(currentData)
+        });
+
+        if (postResponse.ok) {
+            document.getElementById('resultDisplay').innerHTML = `
+                <div class="alert alert-success">
+                    Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
+                </div>`;
+        } else {
+            document.getElementById('resultDisplay').innerHTML = `
+                <div class="alert alert-danger">
+                    Veri güncelleme sırasında bir hata oluştu.
                 </div>`;
         }
+    } catch (error) {
+        document.getElementById('resultDisplay').innerHTML = `
+            <div class="alert alert-danger">
+                Hata: ${error.message}
+            </div>`;
     }
+}
 </script>
 
 </body>
