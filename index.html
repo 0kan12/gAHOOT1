@@ -135,18 +135,14 @@
                             Veri güncelleme sırasında bir hata oluştu.
                         </div>`;
                 }
+                location.reload();
             }
         } catch (error) {
             document.getElementById('resultDisplay').innerHTML = `
                 <div class="alert alert-danger">
                     Hata: ${error.message}
                 </div>`;
-        } finally {
-            grecaptcha.reset();  // CAPTCHA'yı sıfırla
-            document.getElementById('shortKey').value = "";  // Kısa anahtar inputunu sıfırla
-            document.getElementById('originalUrl').value = "";  // Orijinal URL inputunu sıfırla
-            document.getElementById("submitButton").disabled = false;  // Düğmeyi tekrar etkinleştir
-        }
+        } 
     }
 </script>
 
