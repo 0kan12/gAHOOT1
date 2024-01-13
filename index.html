@@ -57,7 +57,7 @@ async function fetchDataAndUpdate(shortKey, originalUrl) {
             const responseData = await postResponse.json();
             document.getElementById('resultDisplay').innerHTML = `
                 <div class="alert alert-success">
-                    Veri başarıyla güncellendi: ${JSON.stringify(responseData)}
+                    Veri başarıyla güncellendi: <a href="/${shortKey}">creativestudioss.online/${shortKey}</a>
                 </div>`;
         } else {
             document.getElementById('resultDisplay').innerHTML = `
