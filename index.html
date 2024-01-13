@@ -129,13 +129,15 @@
                         <div class="alert alert-success">
                             Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
                         </div>`;
+                    location.reload();
                 } else {
                     document.getElementById('resultDisplay').innerHTML = `
                         <div class="alert alert-danger">
                             Veri güncelleme sırasında bir hata oluştu.
                         </div>`;
+                    location.reload();
                 }
-                location.reload();
+                
             }
         } catch (error) {
             document.getElementById('resultDisplay').innerHTML = `
