@@ -81,16 +81,12 @@
 <div id="resultDisplay"></div>
 
 <script>
-var isSubmitting = false;
-
 function enableSubmitButton() {
-    if (!isSubmitting) {
-        document.getElementById("submitButton").disabled = false;
-    }
+    document.getElementById('submitButton').disabled = false;
 }
 
 document.getElementById('urlForm').addEventListener('submit', function(event) {
-    event.preventDefault(); 
+    event.preventDefault();
 
     const shortKey = document.getElementById('shortKey').value;
     const originalUrl = document.getElementById('originalUrl').value;
@@ -106,16 +102,6 @@ document.getElementById('urlForm').addEventListener('submit', function(event) {
         }
     });
 });
-
-function handleFormSubmit() {
-    if (!isSubmitting) {
-        isSubmitting = true;
-        document.getElementById("submitButton").disabled = true;
-        return true; 
-    } else {
-        return false; 
-    }
-}
 
 async function checkAndCreateShortUrl(shortKey, originalUrl) {
     const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
