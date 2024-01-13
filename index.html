@@ -83,76 +83,73 @@
 <script>
     var isSubmitting = false;
 
-function enableSubmitButton() {
-    if (!isSubmitting) {
-        document.getElementById("submitButton").disabled = false;
+    function enableSubmitButton() {
+        if (!isSubmitting) {
+            document.getElementById("submitButton").disabled = false;
+        }
     }
-}
-function handleFormSubmit() {
-    if (!isSubmitting) {
-        isSubmitting = true;
-        document.getElementById("submitButton").disabled = true;
-        return true; 
-    } else {
-        return false; 
-    }
-}
-document.getElementById('urlForm').addEventListener('submit', function(event) {
-    event.preventDefault(); 
 
-    const shortKey = document.getElementById('shortKey').value;
-    const originalUrl = document.getElementById('originalUrl').value;
+    document.getElementById('urlForm').addEventListener('submit', function(event) {
+        event.preventDefault(); 
 
-    checkAndCreateShortUrl(shortKey, originalUrl);
-});
+        const shortKey = document.getElementById('shortKey').value;
+        const originalUrl = document.getElementById('originalUrl').value;
 
-async function checkAndCreateShortUrl(shortKey, originalUrl) {
-    const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
+        checkAndCreateShortUrl(shortKey, originalUrl);
+    });
 
-    try {
-        const response = await fetch(apiUrl);
-        const currentData = await response.json();
+    async function checkAndCreateShortUrl(shortKey, originalUrl) {
+        document.getElementById("submitButton").disabled = true; // Düğmeyi devre dışı bırak
 
-        if (currentData.hasOwnProperty(shortKey)) {
+        const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
+
+        try {
+            const response = await fetch(apiUrl);
+            const currentData = await response.json();
+
+            if (currentData.hasOwnProperty(shortKey)) {
+                document.getElementById('resultDisplay').innerHTML = `
+                    <div class="alert alert-danger">
+                        Bu kısa link anahtarı zaten kullanımda.
+                    </div>`;
+            } else {
+                currentData[shortKey] = originalUrl;
+
+                const postResponse = await fetch(apiUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(currentData)
+                });
+
+                if (postResponse.ok) {
+                    document.getElementById('resultDisplay').innerHTML = `
+                        <div class="alert alert-success">
+                            Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
+                        </div>`;
+                } else {
+                    document.getElementById('resultDisplay').innerHTML = `
+                        <div class="alert alert-danger">
+                            Veri güncelleme sırasında bir hata oluştu.
+                        </div>`;
+                }
+            }
+        } catch (error) {
             document.getElementById('resultDisplay').innerHTML = `
                 <div class="alert alert-danger">
-                    Bu kısa link anahtarı zaten kullanımda.
+                    Hata: ${error.message}
                 </div>`;
-            return;
+        } finally {
+            grecaptcha.reset();  // CAPTCHA'yı sıfırla
+            document.getElementById('shortKey').value = "";  // Kısa anahtar inputunu sıfırla
+            document.getElementById('originalUrl').value = "";  // Orijinal URL inputunu sıfırla
+            document.getElementById("submitButton").disabled = false;  // Düğmeyi tekrar etkinleştir
         }
-
-        currentData[shortKey] = originalUrl;
-
-        const postResponse = await fetch(apiUrl, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(currentData)
-        });
-
-        if (postResponse.ok) {
-            document.getElementById('resultDisplay').innerHTML = `
-                <div class="alert alert-success">
-                    Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
-                </div>`;
-                location.reload();
-        } else {
-            document.getElementById('resultDisplay').innerHTML = `
-                <div class="alert alert-danger">
-                    Veri güncelleme sırasında bir hata oluştu.
-                </div>`;
-                location.reload();
-        }
-    } catch (error) {
-        document.getElementById('resultDisplay').innerHTML = `
-            <div class="alert alert-danger">
-                Hata: ${error.message}
-            </div>`;
     }
-}
 </script>
+
 
 </body>
 </html>
