@@ -79,7 +79,6 @@
 </form>
 
 <div id="resultDisplay"></div>
-
 <script>
     var isSubmitting = false;
 
@@ -95,11 +94,20 @@
         const shortKey = document.getElementById('shortKey').value;
         const originalUrl = document.getElementById('originalUrl').value;
 
+        // Kontrol ekle: shortKey'nin uzunluğunu kontrol et
+        if (shortKey.length > 30 || shortKey.trim() === '') {
+            document.getElementById('resultDisplay').innerHTML = `
+                <div class="alert alert-danger">
+                    Kısa anahtar 30 karakterden uzun olamaz ve boş olamaz.
+                </div>`;
+            return;
+        }
+
         checkAndCreateShortUrl(shortKey, originalUrl);
     });
 
     async function checkAndCreateShortUrl(shortKey, originalUrl) {
-        document.getElementById("submitButton").disabled = true; // Düğmeyi devre dışı bırak
+        document.getElementById("submitButton").disabled = true;
 
         const apiUrl = 'https://jsonblob.com/api/1195399769899261952';
 
@@ -112,7 +120,7 @@
                     <div class="alert alert-danger">
                         Bu kısa link anahtarı zaten kullanımda.
                     </div>`;
-                    setTimeout(() => {
+                setTimeout(() => {
                     location.reload();
                 }, 2000);
             } else {
@@ -132,19 +140,18 @@
                         <div class="alert alert-success">
                             Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
                         </div>`;
-                        setTimeout(() => {
-                    location.reload();
-                }, 2000);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
                 } else {
                     document.getElementById('resultDisplay').innerHTML = `
                         <div class="alert alert-danger">
                             Veri güncelleme sırasında bir hata oluştu.
                         </div>`;
-                        setTimeout(() => {
-                    location.reload();
-                }, 2000);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
                 }
-                
             }
         } catch (error) {
             document.getElementById('resultDisplay').innerHTML = `
