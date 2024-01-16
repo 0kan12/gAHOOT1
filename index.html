@@ -137,6 +137,7 @@
                     document.getElementById('resultDisplay').innerHTML = `
                         <div class="alert alert-success">
                             Kısa link başarıyla oluşturuldu: <a href="${shortKey}" target="_blank">url.dvtfl.xyz/${shortKey}</a>
+                            QrCode: <a href="https://qrgen.dvtfl.xyz?data=url.dvtfl.xyz/${shortKey}">oluşturmak için tıklayın</a>
                         </div>`;
                     setTimeout(() => {
                         location.reload();
