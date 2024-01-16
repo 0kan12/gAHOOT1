@@ -93,8 +93,6 @@
 
         const shortKey = document.getElementById('shortKey').value;
         const originalUrl = document.getElementById('originalUrl').value;
-
-        // Kontrol ekle: shortKey'nin uzunluğunu kontrol et
         if (shortKey.length > 30 || shortKey.trim() === '') {
             document.getElementById('resultDisplay').innerHTML = `
                 <div class="alert alert-danger">
